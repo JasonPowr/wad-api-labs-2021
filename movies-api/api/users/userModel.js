@@ -3,12 +3,17 @@ import bcrypt from 'bcrypt-nodejs';
 
 const Schema = mongoose.Schema;
 
-  
   const UserSchema = new Schema({
     username: { type: String, unique: true, required: true},
     password: {type: String, required: true },
     favourites: [{type: mongoose.Schema.Types.ObjectId, ref: 'Movies'}]
   });
+
+  const passwordValidator = (password) => {
+    let passwordRegEx = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{5,}$/;
+    return passwordRegEx.test(password);
+  };
+  UserSchema.path('password').validate(passwordValidator);
 
   UserSchema.statics.findByUserName = function (username) {
     return this.findOne({ username: username });
